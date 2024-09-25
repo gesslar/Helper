@@ -1,0 +1,10 @@
+{
+  "package": "Helper",
+  "title": "Add help text parsing and printing to Mudlet packages",
+  "description": "A Mudlet package to provide help text parsing and printing via tags.",
+  "version": "1.0.0",
+  "author": "gesslar",
+  "icon": "question.png",
+  "dependencies": "",
+  "outputFile": true
+}
