@@ -5,7 +5,6 @@ helper = {
   _VERSION = '__VERSION__',
   _DESCRIPTION = 'Helper module with enhanced styling capabilities.',
   _URL = 'https://github.com/gesslar/Helper',
-  _LICENSE = 'MIT'
 }
 
 -- Module-level methods
