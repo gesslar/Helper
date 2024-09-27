@@ -99,6 +99,11 @@ end
 
 The function must be defined and accessible by the Helper module.
 
+## Support
+
+While there is no official support and this is a hobby project, you are welcome
+to report issues on the [GitHub repo](https://github.com/gesslar/Helper).
+
 ## Credits
 
 [Question icons created by Roundicons - Flaticon](https://www.flaticon.com/free-icons/question)
