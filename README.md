@@ -102,7 +102,7 @@ The function must be defined and accessible by the Helper module.
 ## Support
 
 While there is no official support and this is a hobby project, you are welcome
-to report issues on the [GitHub repo](https://github.com/gesslar/Helper).
+to report issues on the [GitHub repo](https://github.com/gesslar/Helper/issues).
 
 ## Credits
 
