@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "build": "muddle",
+    "watch": "muddle -w"
+  }
+}
