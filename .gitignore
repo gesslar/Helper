@@ -2,3 +2,5 @@
 # in the repo
 build/
 .output
+.vscode/
+work/

@@ -1,8 +1,8 @@
 [
   {
-        "isActive": "yes",
-        "isFolder": "no",
-        "name": "Helper",
-        "script": ""
+    "isActive": "yes",
+    "isFolder": "no",
+    "name": "Helper",
+    "script": ""
   }
 ]

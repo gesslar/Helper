@@ -1,7 +1,13 @@
 {
-  "scripts": {
-    "build": "muddle",
-    "watch": "muddle -w"
+  "name": "helper",
+  "author": {
+    "name": "gesslar"
   },
-  "license": "Unlicense"
+  "scripts": {
+    "build": "npx -y @gesslar/muddy",
+    "watch": "npx -y @gesslar/muddy -w",
+    "test": "docker run --rm -v \"$PWD\":/workspace gesslardev/mudlet-busted",
+    "docker:update": "docker pull gesslardev/mudlet-busted"
+  },
+  "license": "0BSD"
 }

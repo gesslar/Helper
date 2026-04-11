@@ -1,0 +1,16 @@
+{
+  "runtime": {
+    "version": "Lua 5.1"
+  },
+  "workspace": {
+    "ignoreDir": [
+      "src/resources/test"
+    ]
+  },
+  "diagnostics": {
+    "globals": [
+      "Helper",
+      "helper"
+    ]
+  }
+}
