@@ -1,13 +1,15 @@
 name: Release
 
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches: [main]
 
 jobs:
   release:
+    if: github.event.pull_request.merged == true
     uses: gesslar/Maint/.github/workflows/ReleaseMudlet.yaml@main
     permissions:
       contents: write
     with:
-      quality_check: "${{ vars.QUALITY_CHECK || 'Quality' }}"
+      quality_check: Quality
