@@ -1,14 +1,13 @@
 -- helper.lua
 
 -- Declare the helper table as local for encapsulation
-helper = {
+Helper = {
   _VERSION = '__VERSION__',
   _DESCRIPTION = 'Helper module with enhanced styling capabilities.',
   _URL = 'https://github.com/gesslar/Helper',
 }
-
--- Module-level methods
-local moduleMethods = {}
+---@diagnostic disable-next-line: lowercase-global
+helper = Helper
 
 -- Default styles for headings
 local defaultStyles = {
@@ -49,6 +48,8 @@ local pattern = [[<(@?)(/?)([%w:]+)>]]
 -- Function to process text and replace tags
 local function processText(text, styles)
   styles = styles or {}
+  -- Resolve defaults + caller styles once; reused for every style tag below.
+  local merged_styles = mergeStyles(styles) or {}
   -- Replacement function for gsub
   local function replacement(at, closing, name)
     if at == "@" then
@@ -56,23 +57,24 @@ local function processText(text, styles)
       local ns, func = resolveFunction(name)
 
       if type(func) == "function" then
-        -- Execute the function with or without 'self'
-        local status, result_text, result_styles = pcall(func, ns)
+        -- Namespaced tags pass the namespace as 'self'; plain tags get no args.
+        local status, result_text, result_styles
+        if ns then
+          status, result_text, result_styles = pcall(func, ns)
+        else
+          status, result_text, result_styles = pcall(func)
+        end
 
         if status then
+          local next_styles = styles
           if type(result_styles) == "table" then
-            -- Merge existing styles with new styles
-            local merged_styles = mergeStyles(result_styles)
-
-            -- Recursively process the returned text with merged styles
-            local processed_text = processText(result_text, merged_styles)
-
-            return processed_text
-          else
-            -- No new styles; process the returned text with existing styles
-            local processed_text = processText(result_text)
-            return processed_text
+            -- Layer caller's styles, then function's styles (function wins)
+            next_styles = {}
+            for k, v in pairs(styles) do next_styles[k] = v end
+            for k, v in pairs(result_styles) do next_styles[k] = v end
           end
+
+          return processText(result_text, next_styles)
         else
           -- Handle function execution errors gracefully
           return "<error executing " .. name .. ">"
@@ -82,8 +84,6 @@ local function processText(text, styles)
         return "<invalid function " .. name .. ">"
       end
     else
-      local merged_styles = mergeStyles(styles) or {}
-
       -- Style tag processing
       if closing == "/" then
         return "<reset>"
@@ -100,7 +100,7 @@ local function processText(text, styles)
 end
 
 -- Enhanced print function using cecho for colored output in Mudlet
-function moduleMethods.print(params)
+function Helper.print(params)
   assert(type(params) == 'table', "Expected a table as parameter")
   local text = params.text or ""
   local styles = params.styles or {}
@@ -109,20 +109,7 @@ function moduleMethods.print(params)
   local processedText = processText(text, styles)
 
   -- Print the styled text in Mudlet
-  cecho(processedText .. "\n")   -- Using cecho for colored output in Mudlet
-end
-
--- Existing module methods (format, capitalize, etc.)
-function moduleMethods.format(params)
-  assert(type(params) == 'table', "Expected a table as parameter")
-  -- Example: Uppercase formatting
-  return string.upper(params.text or "")
-end
-
-function moduleMethods.capitalize(params)
-  assert(type(params) == 'table', "Expected a table as parameter")
-  local text = params.text or ""
-  return text:sub(1, 1):upper() .. text:sub(2)
+  cecho(processedText .. "\n") -- Using cecho for colored output in Mudlet
 end
 
 -- Instance methods
@@ -137,27 +124,14 @@ function instanceMethods:print(params)
   local processedText = processText(text, styles)
 
   -- Print the styled text in Mudlet
-  cecho(processedText .. "\n")   -- Using cecho for colored output in Mudlet
-end
-
-function instanceMethods:format(params)
-  assert(type(params) == 'table', "Expected a table as parameter")
-  -- Example: Lowercase formatting
-  return string.lower(params.text or "")
-end
-
-function instanceMethods:reversePrint(params)
-  assert(type(params) == 'table', "Expected a table as parameter")
-  local text = params.text or ""
-  local reversed = text:reverse()
-  cecho(reversed .. "\n")   -- Using cecho for colored output in Mudlet
+  cecho(processedText .. "\n") -- Using cecho for colored output in Mudlet
 end
 
 -- Metatable for instances
 local instanceMetatable = {
   __index = instanceMethods,
-  __tostring = function(self)
-    return string.format("Helper Instance - Version: %s", helper._VERSION)
+  __tostring = function(_)
+    return string.format("Helper Instance - Version: %s", Helper._VERSION)
   end
 }
 
@@ -170,25 +144,11 @@ local function newInstance()
   return obj
 end
 
--- Make the helper table callable
-setmetatable(helper, {
-  __call = function(_, ...)
-    return newInstance(...)
+-- Make the helper table callable as a constructor
+setmetatable(Helper, {
+  __call = function(_)
+    return newInstance()
   end,
-  __index = moduleMethods   -- Redirect method lookups to moduleMethods
 })
 
--- Assign module-level methods to helper table
-for name, func in pairs(moduleMethods) do
-  helper[name] = func
-end
-
--- Local helper functions for text styling (colors)
-local function resetTextStyle()
-  cecho("<reset>")   -- Reset all styles in Mudlet
-end
-
--- You can keep or remove additional styling functions as needed
--- For this implementation, processText handles styling
-
-return helper
+return Helper

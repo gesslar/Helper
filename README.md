@@ -1,15 +1,19 @@
 # Helper
 
-Helper is a Mudlet package to provide help text parsing via tags. It is
-inspired by the help system in the [generic_mapper](https://github.com/Mudlet/Mudlet/blob/development/src/mudlet-lua/lua/generic-mapper/generic_mapper.xml)
+Helper is a Mudlet metapackage to be used in other packages or projects to
+provide help text parsing via tags. It is inspired by the help system in the
+[generic_mapper](https://github.com/Mudlet/Mudlet/blob/development/src/mudlet-lua/lua/generic-mapper/generic_mapper.xml)
 package that comes with Mudlet.
 
 This package is meant to accompany your own packages to provide help text for
 commands, triggers, and whatever else you can think of.
 
 ## Usage
+
 To use Helper, all you need is to have it installed as a package, or,
-alternatively, you can just copy the `Helper.lua` file into your own package.
+alternatively, you can just copy the `Helper.lua` file into your own package,
+either directly, in Mudlet, or in your muddler or muddy project's resources
+directory.
 
 The function to call to use Helper is:
 
@@ -61,11 +65,29 @@ local my_styles = {
 }
 helper.print({
   text =
-"<danger><u>Warning</u></danger>\n" ..
+"<danger>Warning!</danger>\n" ..
 "This is a <h1>test</h1> of the emergency text system. Contact your local\n" ..
 "kitten for some comfort.",
   styles = my_styles,
 })
+```
+
+#### Tags do not nest
+
+Helper currently does not support nested tags. Any closing tag (`</...>`) is
+rewritten to `<reset>`, which clears *all* active styling rather than popping
+only the innermost one. This also applies to cecho's native decoration tags
+(`<b>`, `<u>`, `<i>`, `<s>`) when they appear inside a Helper-styled scope —
+their closers will reset the surrounding color as well.
+
+For now, keep each styled span flat:
+
+```lua
+-- OK
+"<danger>Warning!</danger> <h1>Heading</h1>"
+
+-- Not OK — the </u> and </danger> will wipe the active style
+"<danger><u>Warning</u></danger>"
 ```
 
 ### Function tags
@@ -99,11 +121,6 @@ end
 
 The function must be defined and accessible by the Helper module.
 
-## Support
+## License
 
-While there is no official support and this is a hobby project, you are welcome
-to report issues on the [GitHub repo](https://github.com/gesslar/Helper/issues).
-
-## Credits
-
-[Question icons created by Roundicons - Flaticon](https://www.flaticon.com/free-icons/question)
+`helper` is released under the [0BSD](LICENSE.txt).

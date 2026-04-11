@@ -1,0 +1,13 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    uses: gesslar/Maint/.github/workflows/ReleaseMudlet.yaml@main
+    permissions:
+      contents: write
+    with:
+      quality_check: "${{ vars.QUALITY_CHECK || 'Quality' }}"
